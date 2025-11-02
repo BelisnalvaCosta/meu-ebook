@@ -1,0 +1,210 @@
+/* Reset e configuração geral */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(135deg, #72c2d1, #a3c8e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: "Poppins", Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* Container do livro */
+.book-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 2000px;
+}
+
+/* Botões de navegação */
+.nav-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  font-size: 22px;
+  color: #1d3557;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: #0078c2;
+  color: #fff;
+  transform: scale(1.15);
+}
+
+#prev-btn {
+  margin-right: 25px;
+}
+
+#next-btn {
+  margin-left: 25px;
+}
+
+/* Estrutura do livro */
+.book {
+  width: 600px;
+  height: 620px;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Páginas do livro */
+.page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  transition: transform 1s ease, box-shadow 0.4s ease;
+  border-radius: 15px;
+}
+
+/* Efeito de destaque quando vira */
+.page:hover {
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+}
+
+.page img {
+  width: 60%;
+  border-radius: 10px;
+  margin: 15px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Frente e verso */
+.front,
+.back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 15px;
+  backface-visibility: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 45px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform 1s ease;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+/* Página virada */
+.flipped {
+  transform: rotateY(-180deg);
+}
+
+/* Títulos e textos */
+h1, h2 {
+  color: #1d3557;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+}
+
+p, li {
+  color: #334;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li::before {
+  content: "• ";
+  color: #0078c2;
+  font-weight: bold;
+}
+
+/* Links */
+a {
+  color: #0078c2;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 12px;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #005a91;
+  text-decoration: underline;
+}
+
+/* Efeito de brilho leve na página */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(100deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+  pointer-events: none;
+  border-radius: 15px;
+}
+
+/* Bootcamps */
+.bootcamp-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+.bootcamp-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+}
+.bootcamp-item img {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* Responsividade mínima */
+@media (max-width: 900px) {
+  body {
+    height: auto;
+    padding: 20px;
+  }
+
+  .book {
+    width: 95%;
+    height: auto;
+  }
+
+  .page {
+    height: 480px;
+  }
+
+  .nav-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+}
