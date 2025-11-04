@@ -10,9 +10,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   font-family: "Poppins", Arial, sans-serif;
-  overflow: hidden;
+  /* permitir scroll em telas pequenas */
+  overflow: auto;
+  padding: 24px;
 }
 
 /* Container do livro */
@@ -22,21 +24,31 @@ body {
   align-items: center;
   justify-content: center;
   perspective: 2000px;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* garantir espaço nas laterais para que as páginas não sejam cortadas
+   e para que os botões de navegação fiquem fora do fluxo do livro */
+.book-container {
+  padding: 0 90px;
 }
 
 /* Botões de navegação */
 .nav-btn {
-  width: 60px;
-  height: 60px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #ffffff;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-  font-size: 22px;
+  font-size: 18px;
   color: #1d3557;
   cursor: pointer;
   z-index: 10;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .nav-btn:hover {
@@ -55,16 +67,67 @@ body {
 
 /* Estrutura do livro */
 .book {
-  width: 600px;
-  height: 620px;
+  width: min(900px, 95%);
+  /* altura automática para respeitar conteúdo em telas pequenas */
+  height: auto;
   position: relative;
   transform-style: preserve-3d;
+  overflow: visible; /* permitir que as páginas se projetem sem corte */
+}
+
+/* Ajuste fino para telas de notebook: reduzir levemente o livro para evitar corte em 100% zoom */
+@media (min-width: 900px) and (max-width: 1400px) {
+  .book {
+    /* diminuir um pouco a largura para caber melhor em notebooks */
+    width: min(760px, 88%);
+    transform-origin: center center;
+    /* reduzir visualmente o livro sem mexer no layout interno */
+    transform: scale(0.9);
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+  }
+
+  .page {
+    min-height: 400px;
+  }
+}
+
+/* Ajuste extra para telas médias onde o livro ainda pode ficar parcialmente cortado
+   reduzindo a largura máxima e garantindo margem interna suficiente */
+@media (min-width: 1000px) and (max-width: 1600px) {
+  .book {
+    max-width: calc(100% - 220px);
+    width: min(760px, 86%);
+    transform: scale(0.92);
+  }
+  .book-container { padding: 0 100px; }
+}
+
+/* Faixa adicional para notebooks maiores — torna o livro um pouco menor
+   para que em 75% zoom o conteúdo fique parecido com o comportamento em 50% */
+@media (min-width: 1200px) and (max-width: 1800px) {
+  .book-container { padding: 0 140px; }
+  .book {
+    width: min(720px, 80%);
+    max-width: calc(100% - 280px);
+    transform: scale(0.75) !important;
+    -webkit-transform: scale(0.75) !important;
+    transform-origin: center center;
+  }
+  .page { 
+    min-height: 380px;
+  }
+  .front, .back {
+    padding: 28px 24px;
+  }
+  h1 { font-size: clamp(1rem, 1.2vw, 1.5rem); }
+  p, li { font-size: clamp(0.8rem, 1vw, 0.95rem); }
 }
 
 /* Páginas do livro */
 .page {
   width: 100%;
-  height: 100%;
+  /* usar posição relativa para facilitar em layouts responsivos */
   position: absolute;
   left: 0;
   top: 0;
@@ -72,6 +135,7 @@ body {
   transform-style: preserve-3d;
   transition: transform 1s ease, box-shadow 0.4s ease;
   border-radius: 15px;
+  min-height: 420px;
 }
 
 /* Efeito de destaque quando vira */
@@ -80,7 +144,9 @@ body {
 }
 
 .page img {
-  width: 60%;
+  /* imagens dentro de páginas ficam fluidas */
+  max-width: 100%;
+  height: auto;
   border-radius: 10px;
   margin: 15px 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -96,13 +162,18 @@ body {
   border-radius: 15px;
   backface-visibility: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  padding: 45px;
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   transition: transform 1s ease;
+  /* forçar quebra de palavras para evitar overflow */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 98vw;
 }
 
 .back {
@@ -114,17 +185,31 @@ body {
   transform: rotateY(-180deg);
 }
 
+/* garantir que o texto dentro das páginas quebre e não ultrapasse os limites */
+.front, .back, .page {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
 /* Títulos e textos */
 h1, h2 {
   color: #1d3557;
   margin-bottom: 18px;
   letter-spacing: 0.5px;
+  font-size: clamp(1.2rem, 2vw, 2.1rem);
+  max-width: 95vw;
+}
+
+/* Fonte do título responsiva */
+h1 {
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
 }
 
 p, li {
   color: #334;
   line-height: 1.6;
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  max-width: 95vw;
 }
 
 ul {
@@ -177,29 +262,29 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 30%;
+  flex: 1 1 220px; /* ocupa espaço disponível com mínimo de 220px */
+  max-width: 320px;
 }
 .bootcamp-item img {
   width: 100px;
-  height: 100px;
+  height: auto;
   border-radius: 10px;
   margin-bottom: 10px;
 }
 
 /* Responsividade mínima */
+/* Medium screens (notebooks, tablets) */
 @media (max-width: 900px) {
   body {
-    height: auto;
-    padding: 20px;
+    padding: 18px;
   }
 
   .book {
-    width: 95%;
-    height: auto;
+    width: 100%;
   }
 
   .page {
-    height: 480px;
+    min-height: 420px;
   }
 
   .nav-btn {
@@ -207,4 +292,112 @@ a:hover {
     height: 50px;
     font-size: 18px;
   }
+}
+
+/* Ajuste para telas médias onde o texto pode escapar */
+@media (min-width: 481px) and (max-width: 1199px) {
+  .front, .back {
+    padding: 24px 20px;
+  }
+  h1 { font-size: clamp(1.1rem, 1.6vw, 1.4rem); }
+  p, li { font-size: clamp(0.85rem, 1vw, 0.92rem); }
+}
+
+/* Small screens (phones) */
+@media (max-width: 480px) {
+  .front,
+  .back {
+    padding: 18px;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .book-container {
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* tornar botões flutuantes sobre o conteúdo para poupar espaço */
+  .nav-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    position: relative;
+  }
+
+  .page {
+    min-height: 380px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  p, li {
+    font-size: 0.95rem;
+  }
+}
+
+/* ajustes finos para larguras médias (notebooks) reduzindo paddings e fontes */
+@media (min-width: 900px) and (max-width: 1200px) {
+  .front, .back {
+    padding: 28px;
+    align-items: flex-start;
+    text-align: left;
+  }
+  h1 { font-size: 1.4rem; }
+  p, li { font-size: 0.95rem; }
+  .book { transform: scale(0.92); }
+}
+
+/* Ajustes para garantir legibilidade e evitar overflow em diferentes zooms */
+@media (min-width: 900px) and (max-width: 1400px) {
+  .book {
+    transform: scale(0.75);
+  }
+  .front, .back {
+    padding: 22px 16px;
+    font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+  }
+  h1 { font-size: clamp(1.1rem, 1.5vw, 1.6rem); }
+  p, li { font-size: clamp(0.95rem, 1vw, 1.1rem); }
+  .nav-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1800px) {
+  .book-container { padding: 0 140px; }
+  .book {
+    width: min(720px, 80%);
+    max-width: calc(100% - 280px);
+    transform: scale(0.72) !important;
+    -webkit-transform: scale(0.72) !important;
+    transform-origin: center center;
+  }
+  .page { min-height: 380px; }
+  .front, .back {
+    padding: 18px 12px;
+    font-size: clamp(0.95rem, 1vw, 1.1rem);
+  }
+  h1 { font-size: clamp(1rem, 1.3vw, 1.5rem); }
+  p, li { font-size: clamp(0.95rem, 0.9vw, 1.1rem); }
+  .nav-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+}
+
+/* Bootcamp list responsivo: quebra em duas linhas se necessário */
+.bootcamp-list {
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.bootcamp-item {
+  flex: 1 1 180px;
+  max-width: 220px;
 }

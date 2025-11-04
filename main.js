@@ -14,7 +14,8 @@ function updateBook() {
 }
 
 document.getElementById("next-btn").addEventListener("click", () => {
-  if (currentPage < pages.length) currentPage++;
+  // garantir que currentPage não exceda o último índice
+  if (currentPage < pages.length - 1) currentPage++;
   updateBook();
 });
 
